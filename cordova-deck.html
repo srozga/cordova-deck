@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<!--
+/* Copyright (c) 2013 Szymon Rozga
+ *
+ * See the file LICENSE.txt for copying permission. */
+ -->
+
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=1024, user-scalable=no">
+
+	<title>What is Cordova (PhoneGap)?</title>
+	
+	<!-- Required stylesheet -->
+	<link rel="stylesheet" href="deck.js/core/deck.core.css">
+	
+	<!-- Extension CSS files go here. Remove or add as needed. -->
+	<link rel="stylesheet" href="deck.js/extensions/goto/deck.goto.css">
+	<link rel="stylesheet" href="deck.js/extensions/menu/deck.menu.css">
+	<link rel="stylesheet" href="deck.js/extensions/navigation/deck.navigation.css">
+	<link rel="stylesheet" href="deck.js/extensions/status/deck.status.css">
+	<link rel="stylesheet" href="deck.js/extensions/hash/deck.hash.css">
+	<link rel="stylesheet" href="deck.js/extensions/scale/deck.scale.css">
+
+	<!-- Style theme. More available in /themes/style/ or create your own. -->
+	<!--<link rel="stylesheet" href="themes/style/web-2.0.css">-->
+	<link rel="stylesheet" href="my-styles/swiss-custom.css">
+	
+	<!-- Transition theme. More available in /themes/transition/ or create your own. -->
+	<link rel="stylesheet" href="deck.js/themes/transition/horizontal-slide.css">
+	
+	<!-- Required Modernizr file -->
+	<script src="deck.js/modernizr.custom.js"></script>
+</head>
+<body class="deck-container">
+
+<!-- Begin slides. Just make elements with a class of slide. -->
+
+<section class="slide">
+	<div>
+		<h1>What is Cordova (PhoneGap)?</h1>
+		<h3>Szymon Rozga</h3>
+		<h4><a href="mailto:srozga@bluemetal.com">srozga@bluemetal.com</a></h4>	
+	</div>
+</section>
+
+
+<section class="slide">
+	<h2>Overview</h2>
+	<ul>
+		<li>"A platform to build native apps using HTML, JS and CSS."</li>
+		<li>Uses platform's web browser view/control.</li>
+		<li>Provides a JavaScript abstraction that lets you <a href="http://docs.phonegap.com/en/2.4.0/index.html">talk to sensors, camera, storage, geolocation, events, notifications, media, capture...</a></li>	
+	</ul>
+</section>
+
+<section class="slide">
+	<h2>Overview</h2>
+	<img src='images/iosbasic.png' />
+</section>
+
+<section class="slide">
+	<h2>How does it work?</h2>
+	<ul>
+		<li>No magic.</li>
+		<li>Web Control</li>
+		<li>Native -> JS = WebBrowser.executeScript</li>
+		<li>JS -> Native = override WebBrowse.navigateTo. If navigation Url matches some schema, cancel navigate and call native methods</li>
+	</ul>
+</section>
+
+<section class="slide">
+	<h2>How does it work?</h2>
+	<img src='images/flow.png' />
+</section>
+
+<section class="slide">
+	<h2>Common Complaints</h2>
+	<ul>
+		<li><strong>Too Slow</strong> - Blame the mobile web browsers and app developers</li>
+		<li><strong>Doesn't look like native</strong> - That's not what PhoneGap does. jQueryMobile, Sencha try to do this. As an aside, if you are trying to develop a completely native look & feel in HTML/JS, you are doing it wrong.</li>
+		<li><strong>Limited API</strong> - Kinda but we'll get to that.</li>
+	</ul>
+</section>
+
+<section class="slide">
+	<h2>Common Complaints</h2>
+	<p>Other than the limited API, the problem is between the keyboard and the chair. See <a href="http://sintaxi.com/you-half-assed-it">You half assed it. That is why your PhoneGap application sucks</a>.</p>
+	<ul>
+		<li>Uses jQuery and jQuery Mobile. jQuery is huge and JQM is alpha. Avoid it.</li>
+		<li>click instead of tap? use ontouchstart instead of onclick.</li>
+		<li>setTimeout animations are bad. Mobile does support CSS hardware accelerate animations.</li>
+	</ul>
+</section>
+
+<section class="slide">
+	<h2>Limited API</h2>
+	<ul>
+		<li>Why should it support every piece of functionality on each platform?</li>
+		<li>Plugins - <a href="https://github.com/phonegap/phonegap-plugins">A catalog is available online</a></li>
+		<!--<li>Plugins - <a href="https://github.com/phonegap/phonegap-plugins">a bunch available</a> - I <a href="http://szymonrozga.net/blog/2013/02/cordova-plugins-in-monodroid/">wrote about how to write them in a MonoDroid environment</a></li>-->
+	</ul>
+</section>
+
+<section class="slide">
+	<h2>Plugins</h2>
+	<ul>
+		<li>You write native code that extends CordovaPlugin class</li>
+		<li>A plugin must implement a named service (which Cordova uses to map calls to/from it)</li>
+		<li>Add to plugin manifest</li>
+		<li>Optionally, but recommended, write a JS wrapper around your API</li>
+	</ul>
+</section>
+
+<section class="slide">
+	<h2>Plugin JavaScript wrapper</h2>
+	<p>Wrap your cordova.exec plugin functionality in JavaScript objects and functions.</p>
+	<pre>
+Rozga = {
+    Sample : {
+        callSample: function(callback) {
+            cordova.exec(
+                function (result) {
+                    callback(result);
+                },
+                function() {},
+                'Sample', // service
+                'test', // action
+                [1, 2, 3] // params
+            );
+        }
+    }
+};
+	</pre>
+	<pre>
+Rozga.Sample.callSample(function(result) {
+    document.getElementById('awesome').innerText = result;
+});
+	</pre>
+</section>
+
+<section class="slide">
+	<h2>Plugins</h2>
+	<img src='images/sampleplugin.png' />
+</section>
+
+<section class="slide">
+	<h2>Cross Platform Approach</h2>
+	<img src='images/possiblearchitecture.png' />
+	<ul>
+		<li>No ability to reuse any native code</li>
+	</ul>
+</section>
+
+<section class="slide">
+	<h2>Cross Platform Approach </h2>
+	<img src='images/xamarincrossplatform.png' />
+	<ul>
+		<li>Write all plugins once, plug into platform as necesary</li>
+		<li>Share your C# business logic across all platforms via non-platform-specific Cordova plugins</li>
+
+	</ul>
+</section>
+
+<section class="slide">
+	<h1>Thanks You</h1>
+</section>
+<!-- End slides. -->
+
+
+<!-- Begin extension snippets. Add or remove as needed. -->
+
+<!-- deck.navigation snippet -->
+<a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+<a href="#" class="deck-next-link" title="Next">&#8594;</a>
+
+<!-- deck.status snippet -->
+<p class="deck-status">
+	<span class="deck-status-current"></span>
+	/
+	<span class="deck-status-total"></span>
+</p>
+
+<!-- deck.goto snippet -->
+<form action="." method="get" class="goto-form">
+	<label for="goto-slide">Go to slide:</label>
+	<input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
+	<datalist id="goto-datalist"></datalist>
+	<input type="submit" value="Go">
+</form>
+
+<!-- deck.hash snippet -->
+<a href="." title="Permalink to this slide" class="deck-permalink">#</a>
+
+<!-- End extension snippets. -->
+
+
+<!-- Required JS files. -->
+<script src="deck.js/jquery-1.7.2.min.js"></script>
+<script src="deck.js/core/deck.core.js"></script>
+
+<!-- Extension JS files. Add or remove as needed. -->
+<script src="deck.js/core/deck.core.js"></script>
+<script src="deck.js/extensions/hash/deck.hash.js"></script>
+<script src="deck.js/extensions/menu/deck.menu.js"></script>
+<script src="deck.js/extensions/goto/deck.goto.js"></script>
+<script src="deck.js/extensions/status/deck.status.js"></script>
+<script src="deck.js/extensions/navigation/deck.navigation.js"></script>
+<script src="deck.js/extensions/scale/deck.scale.js"></script>
+
+<!-- Initialize the deck. You can put this in an external file if desired. -->
+<script>
+	$(function() {
+		$.deck('.slide');
+	});
+</script>
+</body>
+</html>
